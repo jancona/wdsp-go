@@ -94,16 +94,17 @@ func SetChannelTSlewDown(channel int, time float64) {
 
 // // iobuffs
 // extern void fexchange0 (int channel, double* in, double* out, int* error);
-func FExchange0(channel int, in []float64, out []float64, err *int) {
+// func FExchange0(channel int, in []float64, out []float64, err *int) {
+func FExchange0(channel int, in *float64, out *float64, err *int) {
 	errc := C.int(*err)
-	C.fexchange0(C.int(channel), (*C.double)(unsafe.Pointer(&in[0])), (*C.double)(unsafe.Pointer(&out[0])), &errc)
+	C.fexchange0(C.int(channel), (*C.double)(in), (*C.double)(out), &errc)
 	*err = int(errc)
 }
 
 // extern void fexchange2 (int channel, INREAL *Iin, INREAL *Qin, OUTREAL *Iout, OUTREAL *Qout, int* error);
 func FExchange2(channel int, Iin []float32, Qin []float32, Iout []float32, Qout []float32, err *int) {
 	errc := C.int(*err)
-	C.fexchange2(C.int(channel), (*C.float)(unsafe.Pointer(&Iin[0])), (*C.float)(unsafe.Pointer(&Qin[0])), (*C.float)(unsafe.Pointer(&Iout[0])), (*C.float)(unsafe.Pointer(&Qout[0])), &errc)
+	C.fexchange2(C.int(channel), (*C.float)(&Iin[0]), (*C.float)(&Qin[0]), (*C.float)(&Iout[0]), (*C.float)(&Qout[0]), &errc)
 	*err = int(errc)
 }
 
@@ -134,23 +135,23 @@ func XCreateAnalyzer(dist int, success *int, mSize int, mNumFft int, mStitch int
 func SetAnalyzer(dist int, nPixout int, nFft int, typ int, flp []int32, sz int, bfSz int, winType int, pi float64, ovrlp int, clp int, fscLin int, fscHin int, nPix int, nStch int, calset int, fmin float64, fmax float64, maxW int) {
 	log.Printf("SetAnalyzer(%d, %d, %d, %d, %v, %d, %d, %d, %f, %d, %d, %d, %d, %d, %d, %d, %f, %f, %d)",
 		dist, nPixout, nFft, typ, flp, sz, bfSz, winType, pi, ovrlp, clp, fscLin, fscHin, nPix, nStch, calset, fmin, fmax, maxW)
-	C.SetAnalyzer(C.int(dist), C.int(nPixout), C.int(nFft), C.int(typ), (*C.int)(unsafe.Pointer(&flp[0])), C.int(sz), C.int(bfSz), C.int(winType), C.double(pi), C.int(ovrlp), C.int(clp), C.int(fscLin), C.int(fscHin), C.int(nPix), C.int(nStch), C.int(calset), C.double(fmin), C.double(fmax), C.int(maxW))
+	C.SetAnalyzer(C.int(dist), C.int(nPixout), C.int(nFft), C.int(typ), (*C.int)(&flp[0]), C.int(sz), C.int(bfSz), C.int(winType), C.double(pi), C.int(ovrlp), C.int(clp), C.int(fscLin), C.int(fscHin), C.int(nPix), C.int(nStch), C.int(calset), C.double(fmin), C.double(fmax), C.int(maxW))
 }
 
 // extern void Spectrum0(int run, int disp, int ss, int LO, double* in);
-func Spectrum0(run int, disp int, ss int, LO int, in []float64) {
-	C.Spectrum0(C.int(run), C.int(disp), C.int(ss), C.int(LO), (*C.double)(unsafe.Pointer(&in[0])))
+func Spectrum0(run int, disp int, ss int, LO int, in *float64) {
+	C.Spectrum0(C.int(run), C.int(disp), C.int(ss), C.int(LO), (*C.double)(in))
 }
 
 // extern void Spectrum(int disp, int ss, int LO, float* pI, float* pQ);
 func Spectrum(disp int, ss int, LO int, I []float32, Q []float32) {
-	C.Spectrum(C.int(disp), C.int(ss), C.int(LO), (*C.float)(unsafe.Pointer(&I[0])), (*C.float)(unsafe.Pointer(&Q[0])))
+	C.Spectrum(C.int(disp), C.int(ss), C.int(LO), (*C.float)(&I[0]), (*C.float)(&Q[0]))
 }
 
 // extern void GetPixels(int disp, int pixout, float *pix, int *flag);
 func GetPixels(disp int, pixout int, pix *[]float32, flag *int) {
 	flagC := C.int(*flag)
-	C.GetPixels(C.int(disp), C.int(pixout), (*C.float)(unsafe.Pointer(&(*pix)[0])), &flagC)
+	C.GetPixels(C.int(disp), C.int(pixout), (*C.float)(&(*pix)[0]), &flagC)
 	*flag = int(flagC)
 }
 
@@ -453,7 +454,7 @@ func SetEXTDIVOutput(id int, output int) {
 
 // extern void SetEXTDIVRotate (int id, int nr, double *Irotate, double *Qrotate);
 func SetEXTDIVRotate(id int, nr int, Irotate []float64, Qrotate []float64) {
-	C.SetEXTDIVRotate(C.int(id), C.int(nr), (*C.double)(unsafe.Pointer(&Irotate[0])), (*C.double)(unsafe.Pointer(&Qrotate[0])))
+	C.SetEXTDIVRotate(C.int(id), C.int(nr), (*C.double)(&Irotate[0]), (*C.double)(&Qrotate[0]))
 }
 
 // extern void xdivEXT (int id, int nsamples, double **in, double *out);
